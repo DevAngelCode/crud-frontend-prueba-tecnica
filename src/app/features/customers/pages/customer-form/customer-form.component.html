@@ -1,0 +1,214 @@
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h1 class="fw-bold mb-1">Nuevo cliente</h1>
+        <p class="text-secondary mb-0">
+            Registra un nuevo cliente
+        </p>
+    </div>
+
+    @if (errorMessage) {
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+
+            <form [formGroup]="customerForm" (ngSubmit)="save()">
+
+                <div class="row g-3">
+
+                    <!-- Customer ID -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Customer ID
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="customerId" [class.is-invalid]="
+                customerForm.controls.customerId.touched &&
+                customerForm.controls.customerId.invalid
+              " />
+
+                        @if (
+                        customerForm.controls.customerId.touched &&
+                        customerForm.controls.customerId.invalid
+                        ) {
+                        <div class="invalid-feedback">
+                            El Customer ID es obligatorio.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Nombre
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="firstName" [class.is-invalid]="
+                customerForm.controls.firstName.touched &&
+                customerForm.controls.firstName.invalid
+              " />
+
+                        @if (
+                        customerForm.controls.firstName.touched &&
+                        customerForm.controls.firstName.invalid
+                        ) {
+                        <div class="invalid-feedback">
+                            El nombre es obligatorio.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Apellido -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Apellido
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="lastName" [class.is-invalid]="
+                customerForm.controls.lastName.touched &&
+                customerForm.controls.lastName.invalid
+              " />
+
+                        @if (
+                        customerForm.controls.lastName.touched &&
+                        customerForm.controls.lastName.invalid
+                        ) {
+                        <div class="invalid-feedback">
+                            El apellido es obligatorio.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Empresa -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Empresa
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="company" />
+                    </div>
+
+                    <!-- Ciudad -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Ciudad
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="city" />
+                    </div>
+
+                    <!-- País -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            País
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="country" />
+                    </div>
+
+                    <!-- Fecha -->
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Fecha de suscripción
+                        </label>
+
+                        <input type="date" class="form-control" formControlName="subscriptionDate" [class.is-invalid]="
+                customerForm.controls.subscriptionDate.touched &&
+                customerForm.controls.subscriptionDate.invalid
+              " />
+
+                        @if (
+                        customerForm.controls.subscriptionDate.touched &&
+                        customerForm.controls.subscriptionDate.invalid
+                        ) {
+                        <div class="invalid-feedback">
+                            La fecha es obligatoria.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Teléfono 1 -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Teléfono 1
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="phone1" />
+                    </div>
+
+                    <!-- Teléfono 2 -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Teléfono 2
+                        </label>
+
+                        <input type="text" class="form-control" formControlName="phone2" />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input type="email" class="form-control" formControlName="email" [class.is-invalid]="
+                customerForm.controls.email.touched &&
+                customerForm.controls.email.invalid
+              " />
+
+                        @if (
+                        customerForm.controls.email.touched &&
+                        customerForm.controls.email.invalid
+                        ) {
+                        <div class="invalid-feedback">
+                            Ingresa un email válido.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Website -->
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Website
+                        </label>
+
+                        <input type="url" class="form-control" formControlName="website"
+                            placeholder="https://ejemplo.com" />
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <button type="button" class="btn btn-light" (click)="cancel()" [disabled]="isSaving">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+
+                        @if (isSaving) {
+                        <span class="spinner-border spinner-border-sm me-2">
+                        </span>
+                        Guardando...
+                        } @else {
+                        <i class="bi bi-check-lg me-2"></i>
+                        Guardar cliente
+                        }
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

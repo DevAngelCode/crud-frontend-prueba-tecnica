@@ -1,0 +1,204 @@
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold mb-1">Clientes</h1>
+            <p class="text-secondary mb-0">
+                Gestiona los clientes registrados
+            </p>
+        </div>
+
+        <button class="btn btn-primary" (click)="createCustomer()">
+            <i class="bi bi-plus-lg me-2"></i>
+            Nuevo cliente
+        </button>
+
+    </div>
+
+    <!-- Search -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text" class="form-control" placeholder="Buscar por nombre, email, empresa o país..."
+                    [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event); onSearch()" />
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+
+    <div class="text-center py-5">
+
+        <div class="spinner-border text-primary mb-3" role="status">
+        </div>
+
+        <p class="text-secondary mb-0">
+            Cargando clientes...
+        </p>
+
+    </div>
+
+    }
+
+    <!-- Table -->
+    @else {
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Empresa</th>
+                            <th>País</th>
+                            <th>Email</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @for (customer of paginatedCustomers(); track customer.id) {
+
+                        <tr>
+
+                            <td class="text-secondary">
+                                #{{ customer.id }}
+                            </td>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ customer.firstName }}
+                                    {{ customer.lastName }}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ customer.company || '-' }}
+                            </td>
+
+                            <td>
+                                {{ customer.country || '-' }}
+                            </td>
+
+                            <td>
+                                {{ customer.email || '-' }}
+                            </td>
+
+                            <td class="text-center">
+
+                                <button class="btn btn-sm btn-outline-secondary me-1" title="Ver">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-primary me-1" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        }
+
+                        @empty {
+
+                        <tr>
+
+                            <td colspan="6" class="text-center py-5">
+
+                                <i class="bi bi-search fs-1 text-secondary"></i>
+
+                                <p class="text-secondary mt-2 mb-0">
+                                    No se encontraron clientes
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <small class="text-secondary">
+            Página {{ currentPage() }} de {{ totalPages() }}
+        </small>
+
+        <nav>
+            <ul class="pagination mb-0">
+
+                <li class="page-item" [class.disabled]="currentPage() === 1">
+
+                    <button class="page-link" (click)="changePage(currentPage() - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                </li>
+
+                @for (page of pages(); track page) {
+
+                <li class="page-item" [class.active]="currentPage() === page">
+
+                    <button class="page-link" (click)="changePage(page)">
+                        {{ page }}
+                    </button>
+
+                </li>
+
+                }
+
+                <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+
+                    <button class="page-link" (click)="changePage(currentPage() + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                </li>
+
+            </ul>
+        </nav>
+
+    </div>
+
+    }
+
+    }
+
+</div>
