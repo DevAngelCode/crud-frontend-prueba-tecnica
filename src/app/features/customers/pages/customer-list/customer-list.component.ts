@@ -87,4 +87,9 @@ export class CustomerListComponent implements OnInit {
   createCustomer(): void {
     this.router.navigate(['/customers/new']);
   }
+  editCustomer(id: number): void {
+
+    this.router.navigate(['/customers', id, 'edit']);
+
+  }
 }

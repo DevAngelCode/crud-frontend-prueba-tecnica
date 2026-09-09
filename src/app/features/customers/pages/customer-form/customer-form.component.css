@@ -1,15 +1,118 @@
 .card {
-  border-radius: 12px;
+  border-radius: 14px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+}
+
+.back-button {
+  border-radius: 8px;
+}
+
+.back-button:hover {
+  background-color: #e9ecef;
 }
 
 .form-label {
   font-weight: 500;
+  color: #343a40;
+  margin-bottom: 0.5rem;
 }
 
 .form-control {
+  min-height: 42px;
   border-radius: 8px;
 }
 
 .form-control:focus {
+  border-color: #86b7fe;
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+}
+
+.form-control:disabled {
+  background-color: #f1f3f5;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header h5 {
+  font-weight: 600;
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #e7f1ff;
+  color: #0d6efd;
+
+  border-radius: 10px;
+
+  font-size: 1.1rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  border-top: 1px solid #dee2e6;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.loading-container {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.alert {
+  border-radius: 10px;
+}
+
+.invalid-feedback {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 767px) {
+
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
 }
