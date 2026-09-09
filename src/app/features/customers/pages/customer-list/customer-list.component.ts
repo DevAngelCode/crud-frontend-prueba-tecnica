@@ -1,60 +1,66 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { CustomerService } from '../../../../core/services/customer.service';
 import { CustomerModel } from '../../../../core/models/customer.model';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customer-list',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.css'
 })
 export class CustomerListComponent implements OnInit {
   private readonly customerService = inject(CustomerService);
   private readonly router = inject(Router);
+
   customers = signal<CustomerModel[]>([]);
   searchTerm = signal('');
   isLoading = signal(true);
 
-  currentPage = signal(1);
+  currentPage = signal(0);
   pageSize = 10;
-
-  filteredCustomers = computed(() => {
-    const search = this.searchTerm().trim().toLowerCase();
-
-    if (!search) {
-      return this.customers();
-    }
-
-    return this.customers().filter(customer =>
-      `${customer.firstName} ${customer.lastName}`
-        .toLowerCase()
-        .includes(search) ||
-      customer.email?.toLowerCase().includes(search) ||
-      customer.company?.toLowerCase().includes(search) ||
-      customer.country?.toLowerCase().includes(search)
-    );
-  });
+  totalElements = signal(0);
 
   totalPages = computed(() =>
-    Math.ceil(this.filteredCustomers().length / this.pageSize)
+    Math.ceil(this.totalElements() / this.pageSize)
   );
 
-  paginatedCustomers = computed(() => {
-    const start = (this.currentPage() - 1) * this.pageSize;
-    const end = start + this.pageSize;
+  visiblePages = computed<number[]>(() => {
+    const total = this.totalPages();
+    const current = this.currentPage() + 1;
+    const windowSize = 5;
+    const pages: number[] = [];
 
-    return this.filteredCustomers().slice(start, end);
+    const start = Math.max(1, current - Math.floor(windowSize / 2));
+    const end = Math.min(total, start + windowSize - 1);
+
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) {
+        pages.push(-1);
+      }
+    }
+
+    for (let page = start; page <= end; page++) {
+      pages.push(page);
+    }
+
+    if (end < total) {
+      if (end < total - 1) {
+        pages.push(-2);
+      }
+      pages.push(total);
+    }
+
+    return pages;
   });
 
-  pages = computed(() =>
-    Array.from(
-      { length: this.totalPages() },
-      (_, index) => index + 1
-    )
-  );
+  isEllipsis = (page: number): boolean => page < 0;
+
+  hasPreviousPage = computed(() => this.currentPage() > 0);
+  hasNextPage = computed(() => this.currentPage() < this.totalPages() - 1);
 
   ngOnInit(): void {
     this.loadCustomers();
@@ -63,89 +69,92 @@ export class CustomerListComponent implements OnInit {
   loadCustomers(): void {
     this.isLoading.set(true);
 
-    this.customerService.findAll().subscribe({
-      next: (customers) => {
-        this.customers.set(customers);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Error al obtener clientes:', error);
-        this.isLoading.set(false);
-      }
-    });
+    this.customerService
+      .findAll(this.currentPage(), this.pageSize, this.searchTerm())
+      .subscribe({
+        next: (response) => {
+          this.customers.set(response.content);
+          this.totalElements.set(response.totalElements);
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Error al obtener clientes:', error);
+          this.isLoading.set(false);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudieron cargar los clientes.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
   }
 
   onSearch(): void {
-    this.currentPage.set(1);
+    this.currentPage.set(0);
+    this.loadCustomers();
+  }
+
+  clearSearch(): void {
+    this.searchTerm.set('');
+    this.onSearch();
   }
 
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
+      this.currentPage.set(page - 1);
+      this.loadCustomers();
     }
   }
+
   createCustomer(): void {
     this.router.navigate(['/customers/new']);
   }
+
   editCustomer(id: number): void {
-
     this.router.navigate(['/customers', id, 'edit']);
-
   }
+
   viewCustomer(id: number): void {
-
     this.router.navigate(['/customers', id]);
-
   }
+
   deleteCustomer(customer: CustomerModel): void {
+    Swal.fire({
+      title: '¿Eliminar cliente?',
+      html: `Se eliminará a <strong>${customer.firstName} ${customer.lastName}</strong>. Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
 
-    const confirmed = window.confirm(
-      `¿Estás seguro de eliminar al cliente ${customer.firstName} ${customer.lastName}?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.customerService
-      .delete(customer.id)
-      .subscribe({
-
+      this.customerService.delete(customer.id).subscribe({
         next: () => {
-
-          this.customers.update(customers =>
-            customers.filter(
-              item => item.id !== customer.id
-            )
-          );
-
-          if (
-            this.currentPage() > this.totalPages() &&
-            this.currentPage() > 1
-          ) {
-
-            this.currentPage.update(
-              page => page - 1
-            );
-
-          }
-
+          this.loadCustomers();
+          Swal.fire({
+            title: 'Eliminado',
+            text: 'El cliente se eliminó correctamente.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
         },
-
         error: (error) => {
-
-          console.error(
-            'Error al eliminar cliente:',
-            error
-          );
-
-          window.alert(
-            'No se pudo eliminar el cliente.'
-          );
-
+          console.error('Error al eliminar cliente:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar el cliente.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
-
       });
-
+    });
   }
 }

@@ -1,17 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CustomerService } from '../../../../core/services/customer.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CustomerService } from '../../../../core/services/customer.service';
 import { CustomerModel } from '../../../../core/models/customer.model';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-customer-detail',
-  imports: [CommonModule],
   templateUrl: './customer-detail.component.html',
   styleUrl: './customer-detail.component.css'
 })
-export class CustomerDetailComponent implements OnInit{
- private readonly customerService = inject(CustomerService);
+export class CustomerDetailComponent implements OnInit {
+  private readonly customerService = inject(CustomerService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -21,7 +19,6 @@ export class CustomerDetailComponent implements OnInit{
   errorMessage = '';
 
   ngOnInit(): void {
-
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
@@ -34,53 +31,31 @@ export class CustomerDetailComponent implements OnInit{
   }
 
   private loadCustomer(id: number): void {
-
     this.isLoading = true;
     this.errorMessage = '';
 
     this.customerService.findById(id).subscribe({
-
       next: (customer) => {
-
         this.customer = customer;
         this.isLoading = false;
-
       },
-
       error: (error) => {
-
-        console.error(
-          'Error al cargar cliente:',
-          error
-        );
-
-        this.errorMessage =
-          'No se pudo cargar la información del cliente.';
-
+        console.error('Error al cargar cliente:', error);
+        this.errorMessage = 'No se pudo cargar la información del cliente.';
         this.isLoading = false;
-
       }
-
     });
   }
 
   editCustomer(): void {
-
     if (!this.customer) {
       return;
     }
 
-    this.router.navigate([
-      '/customers',
-      this.customer.id,
-      'edit'
-    ]);
+    this.router.navigate(['/customers', this.customer.id, 'edit']);
   }
 
   goBack(): void {
-
-    this.router.navigate([
-      '/customers'
-    ]);
+    this.router.navigate(['/customers']);
   }
 }

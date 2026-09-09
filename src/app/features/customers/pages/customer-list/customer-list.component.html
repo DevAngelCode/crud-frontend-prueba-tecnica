@@ -1,7 +1,7 @@
 <div class="container py-4">
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
 
         <div>
             <h1 class="fw-bold mb-1">Clientes</h1>
@@ -10,7 +10,7 @@
             </p>
         </div>
 
-        <button class="btn btn-primary" (click)="createCustomer()">
+        <button class="btn btn-primary ms-sm-auto" (click)="createCustomer()">
             <i class="bi bi-plus-lg me-2"></i>
             Nuevo cliente
         </button>
@@ -21,16 +21,41 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
 
-            <div class="input-group">
+            <form class="row g-2 align-items-center" (ngSubmit)="onSearch()">
 
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search"></i>
-                </span>
+                <label class="col-form-label fw-semibold col-12 col-sm-auto col-form-label-sm mb-0"
+                    for="customerSearch">
+                    <i class="bi bi-upc-scan me-1"></i>
+                    Buscar por código:
+                </label>
 
-                <input type="text" class="form-control" placeholder="Buscar por nombre, email, empresa o país..."
-                    [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event); onSearch()" />
+                <div class="col-sm col-12">
 
-            </div>
+                    <div class="input-group">
+
+                        <input id="customerSearch" type="text" class="form-control"
+                            placeholder="Ej: WA-001" [(ngModel)]="searchTerm" name="customerSearch"
+                            [disabled]="isLoading()" />
+
+                        @if (searchTerm()) {
+
+                        <button type="button" class="btn btn-outline-secondary search-clear-btn" title="Limpiar"
+                            (click)="clearSearch()">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+
+                        }
+
+                        <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+                            <i class="bi bi-search me-1 d-sm-inline d-md-none d-lg-inline"></i>
+                            Buscar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
     </div>
@@ -65,7 +90,7 @@
                     <thead class="table-light">
 
                         <tr>
-                            <th>ID</th>
+                            <th>Nº</th>
                             <th>Cliente</th>
                             <th>Empresa</th>
                             <th>País</th>
@@ -77,12 +102,12 @@
 
                     <tbody>
 
-                        @for (customer of paginatedCustomers(); track customer.id) {
+                        @for (customer of customers(); track customer.id; let index = $index) {
 
                         <tr>
 
                             <td class="text-secondary">
-                                #{{ customer.id }}
+                                {{ index + 1 }}
                             </td>
 
                             <td>
@@ -158,28 +183,45 @@
     <!-- Pagination -->
     @if (totalPages() > 1) {
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4 px-2">
 
         <small class="text-secondary">
-            Página {{ currentPage() }} de {{ totalPages() }}
+            Mostrando {{ pageSize }} de {{ totalElements() }} clientes
+            <span class="text-muted ms-1">
+                · Página {{ currentPage() + 1 }} de {{ totalPages() }}
+            </span>
         </small>
 
-        <nav>
-            <ul class="pagination mb-0">
+        <nav aria-label="Paginación de clientes" class="custom-pagination">
 
-                <li class="page-item" [class.disabled]="currentPage() === 1">
+            <ul class="pagination pagination-sm mb-0">
 
-                    <button class="page-link" (click)="changePage(currentPage() - 1)">
+                <li class="page-item" [class.disabled]="!hasPreviousPage()">
+
+                    <button type="button" class="page-link" (click)="changePage(currentPage())"
+                        [disabled]="!hasPreviousPage()" aria-label="Anterior">
+
                         <i class="bi bi-chevron-left"></i>
+
                     </button>
 
                 </li>
 
-                @for (page of pages(); track page) {
+                @for (page of visiblePages(); track $index) {
 
-                <li class="page-item" [class.active]="currentPage() === page">
+                @if (isEllipsis(page)) {
 
-                    <button class="page-link" (click)="changePage(page)">
+                <li class="page-item disabled">
+
+                    <span class="page-link page-ellipsis">…</span>
+
+                </li>
+
+                } @else {
+
+                <li class="page-item" [class.active]="currentPage() === page - 1">
+
+                    <button type="button" class="page-link" (click)="changePage(page)">
                         {{ page }}
                     </button>
 
@@ -187,15 +229,21 @@
 
                 }
 
-                <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                }
 
-                    <button class="page-link" (click)="changePage(currentPage() + 1)">
+                <li class="page-item" [class.disabled]="!hasNextPage()">
+
+                    <button type="button" class="page-link" (click)="changePage(currentPage() + 2)"
+                        [disabled]="!hasNextPage()" aria-label="Siguiente">
+
                         <i class="bi bi-chevron-right"></i>
+
                     </button>
 
                 </li>
 
             </ul>
+
         </nav>
 
     </div>
