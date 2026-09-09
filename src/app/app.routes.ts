@@ -23,5 +23,11 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./features/customers/pages/customer-form/customer-form.component')
                 .then(m => m.CustomerFormComponent)
-    }
+    },
+    {
+        path: 'customers/:id',
+        loadComponent: () =>
+            import('./features/customers/pages/customer-detail/customer-detail.component')
+                .then(m => m.CustomerDetailComponent)
+    },
 ];

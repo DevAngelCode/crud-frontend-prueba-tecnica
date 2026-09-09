@@ -92,4 +92,60 @@ export class CustomerListComponent implements OnInit {
     this.router.navigate(['/customers', id, 'edit']);
 
   }
+  viewCustomer(id: number): void {
+
+    this.router.navigate(['/customers', id]);
+
+  }
+  deleteCustomer(customer: CustomerModel): void {
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de eliminar al cliente ${customer.firstName} ${customer.lastName}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.customerService
+      .delete(customer.id)
+      .subscribe({
+
+        next: () => {
+
+          this.customers.update(customers =>
+            customers.filter(
+              item => item.id !== customer.id
+            )
+          );
+
+          if (
+            this.currentPage() > this.totalPages() &&
+            this.currentPage() > 1
+          ) {
+
+            this.currentPage.update(
+              page => page - 1
+            );
+
+          }
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Error al eliminar cliente:',
+            error
+          );
+
+          window.alert(
+            'No se pudo eliminar el cliente.'
+          );
+
+        }
+
+      });
+
+  }
 }

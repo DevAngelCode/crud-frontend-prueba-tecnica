@@ -1,0 +1,382 @@
+<div class="container py-4">
+
+    <!-- ENCABEZADO -->
+    <div class="page-header mb-4">
+
+        <button type="button" class="btn btn-light back-button mb-3" (click)="goBack()">
+
+            <i class="bi bi-arrow-left me-2"></i>
+
+            Volver
+
+        </button>
+
+        <div class="d-flex justify-content-between align-items-start">
+
+            <div>
+
+                <h1 class="fw-bold mb-1">
+                    Detalle del cliente
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    Consulta la información registrada del cliente
+                </p>
+
+            </div>
+
+            @if (customer) {
+
+            <button type="button" class="btn btn-primary" (click)="editCustomer()">
+
+                <i class="bi bi-pencil me-2"></i>
+
+                Editar
+
+            </button>
+
+            }
+
+        </div>
+
+    </div>
+
+    <!-- CARGANDO -->
+    @if (isLoading) {
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body loading-container">
+
+            <div class="spinner-border text-primary mb-3" role="status">
+
+                <span class="visually-hidden">
+                    Cargando...
+                </span>
+
+            </div>
+
+            <p class="text-secondary mb-0">
+                Cargando información del cliente...
+            </p>
+
+        </div>
+
+    </div>
+
+    } @else if (errorMessage) {
+
+    <!-- ERROR -->
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+        <span>
+            {{ errorMessage }}
+        </span>
+
+    </div>
+
+    } @else if (customer) {
+
+    <!-- INFORMACIÓN PRINCIPAL -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="customer-header">
+
+                <div class="customer-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+
+                        {{ customer.firstName }}
+                        {{ customer.lastName }}
+
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+
+                        Customer ID:
+                        <span class="fw-semibold">
+                            {{ customer.customerId }}
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DATOS DEL CLIENTE -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4 p-md-5">
+
+            <!-- INFORMACIÓN PERSONAL -->
+            <div class="section-header mb-4">
+
+                <div class="section-icon">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Información del cliente
+                    </h5>
+
+                    <small class="text-secondary">
+                        Datos principales
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Nombre
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.firstName }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Apellido
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.lastName }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Empresa
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.company || '-' }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Customer ID
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.customerId }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr class="my-5">
+
+            <!-- UBICACIÓN -->
+            <div class="section-header mb-4">
+
+                <div class="section-icon">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Ubicación
+                    </h5>
+
+                    <small class="text-secondary">
+                        Información geográfica
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Ciudad
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.city || '-' }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        País
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.country || '-' }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr class="my-5">
+
+            <!-- CONTACTO -->
+            <div class="section-header mb-4">
+
+                <div class="section-icon">
+                    <i class="bi bi-telephone"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Información de contacto
+                    </h5>
+
+                    <small class="text-secondary">
+                        Medios de contacto registrados
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Teléfono 1
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.phone1 || '-' }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Teléfono 2
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.phone2 || '-' }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Email
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.email || '-' }}
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Website
+                    </div>
+
+                    <div class="detail-value">
+
+                        @if (customer.website) {
+
+                        <a [href]="customer.website" target="_blank" rel="noopener noreferrer">
+
+                            {{ customer.website }}
+
+                        </a>
+
+                        } @else {
+
+                        -
+
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr class="my-5">
+
+            <!-- SUSCRIPCIÓN -->
+            <div class="section-header mb-4">
+
+                <div class="section-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div>
+
+                    <h5 class="mb-1">
+                        Suscripción
+                    </h5>
+
+                    <small class="text-secondary">
+                        Información de suscripción
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="detail-label">
+                        Fecha de suscripción
+                    </div>
+
+                    <div class="detail-value">
+                        {{ customer.subscriptionDate || '-' }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    }
+
+</div>

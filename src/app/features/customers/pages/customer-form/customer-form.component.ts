@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CustomerCreateRequestModel } from '../../../../core/models/customer-create-request.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerService } from '../../../../core/services/customer.service';
@@ -12,7 +12,7 @@ import { CustomerUpdateRequestModel } from '../../../../core/models/customer-upd
   templateUrl: './customer-form.component.html',
   styleUrl: './customer-form.component.css'
 })
-export class CustomerFormComponent {
+export class CustomerFormComponent implements OnInit{
   private readonly fb = inject(FormBuilder);
   private readonly customerService = inject(CustomerService);
   private readonly route = inject(ActivatedRoute);
